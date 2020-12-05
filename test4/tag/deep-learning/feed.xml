@@ -1,0 +1,1681 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator>
+  <link href="https://hy38.github.io/tag/deep-learning/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://hy38.github.io/" rel="alternate" type="text/html" />
+  <updated>2020-12-05T22:01:41+09:00</updated>
+  <id>https://hy38.github.io/tag/deep-learning/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">HY38’s IT Blog | </title>
+  
+
+  
+    <subtitle>b Ha p</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">D2L 3 - Image Classification Implementation from Scratch</title>
+      <link href="https://hy38.github.io/D2L-3-image-classification-implementation-from-scratch" rel="alternate" type="text/html" title="D2L 3 - Image Classification Implementation from Scratch" />
+      <published>2019-06-24T19:00:00+09:00</published>
+      <updated>2019-06-24T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-image-classification-implementation-from-scratch</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-image-classification-implementation-from-scratch">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--image-classification-implementation-from-scratch&quot;&gt;Exercise : Image Classification Implementation from Scratch&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-in-this-section-we-directly-implemented-the-softmax-function-based-on-the-mathematical-definition-of-the-softmax-operation-what-problems-might-this-cause-hint-try-to-calculate-the-size-of-exp50&quot;&gt;1) In this section, we directly implemented the softmax function based on the mathematical definition of the softmax operation. What problems might this cause (hint: try to calculate the size of $exp(50)$)?&lt;/h6&gt;
+
+&lt;p&gt;The result of exp(50.0) is tensor([5.1847e+21]).&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;50.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([5.1847e+21])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The result is as below.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;5,184,700,000,000,000,000,000&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;When implementing expressions in computer, we should care about overflows, underflows even though it is mathmatically right.&lt;/p&gt;
+
+&lt;p&gt;I have experimented $exp(X)$ with some numbers and noticed that when the number gets bigger than &lt;code class=&quot;highlighter-rouge&quot;&gt;88.7&lt;/code&gt;, the output is printed as &lt;code class=&quot;highlighter-rouge&quot;&gt;tensor([inf])&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;We should be more careful of over / underflows when computing numerical values.&lt;/p&gt;
+
+&lt;h6 id=&quot;2-the-function-cross_entropy-in-this-section-is-implemented-according-to-the-definition-of-the-cross-entropy-loss-function-what-could-be-the-problem-with-this-implementation-hint-consider-the-domain-of-the-logarithm&quot;&gt;2) The function cross_entropy in this section is implemented according to the definition of the cross-entropy loss function. What could be the problem with this implementation (hint: consider the domain of the logarithm)?&lt;/h6&gt;
+
+&lt;p&gt;$\log(0)$ has the value of &lt;code class=&quot;highlighter-rouge&quot;&gt;-inf&lt;/code&gt;. When implementing cross-entropy loss function, this might cause some problems.&lt;/p&gt;
+
+&lt;h6 id=&quot;3-what-solutions-you-can-think-of-to-fix-the-two-problems-above&quot;&gt;3) What solutions you can think of to fix the two problems above?&lt;/h6&gt;
+
+&lt;h6 id=&quot;4-is-it-always-a-good-idea-to-return-the-most-likely-label-eg-would-you-do-this-for-medical-diagnosis&quot;&gt;4) Is it always a good idea to return the most likely label. E.g., would you do this for medical diagnosis?&lt;/h6&gt;
+
+&lt;h6 id=&quot;5-assume-that-we-want-to-use-softmax-regression-to-predict-the-next-word-based-on-some-features-what-are-some-problems-that-might-arise-from-a-large-vocabulary&quot;&gt;5) Assume that we want to use softmax regression to predict the next word based on some features. What are some problems that might arise from a large vocabulary?&lt;/h6&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&amp;lt;&amp;gt;{: target=”_blank”}&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&amp;lt;&amp;gt;{: target=”_blank”}&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="image classification" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 3 - Image Classification Dataset</title>
+      <link href="https://hy38.github.io/D2L-3-image-classification-dataset" rel="alternate" type="text/html" title="D2L 3 - Image Classification Dataset" />
+      <published>2019-06-21T19:00:00+09:00</published>
+      <updated>2019-06-21T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-image-classification-dataset</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-image-classification-dataset">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--image-classification-dataset&quot;&gt;Exercise : Image Classification Dataset&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-does-reducing-the-batch_size-for-instance-to-1-affect-read-performance&quot;&gt;1) Does reducing the batch_size (for instance, to 1) affect read performance?&lt;/h6&gt;
+
+&lt;p&gt;When the &lt;code class=&quot;highlighter-rouge&quot;&gt;batch_size&lt;/code&gt; increases, the read makes better performance.&lt;/p&gt;
+
+&lt;p&gt;But when the &lt;code class=&quot;highlighter-rouge&quot;&gt;batch_size&lt;/code&gt; gets bigger than 512, performance gets worse.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;b_result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;512&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2048&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_s&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;train_iter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataLoader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mnist_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shuffle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                                 &lt;span class=&quot;n&quot;&gt;num_workers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_dataloader_workers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;timer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Timer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;b_result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;batch_size:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;, time: {:.2f}&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 1 , time: 245.93&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 2 , time: 127.68&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 4 , time: 66.66&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 8 , time: 43.02&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 16 , time: 19.77&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 32 , time: 11.95&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 64 , time: 9.08&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 128 , time: 7.61&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 256 , time: 6.64&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 512 , time: 7.20&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 1024 , time: 7.09&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# batch_size: 2048 , time: 8.27&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;d2l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xlabel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'batch_size'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ylabel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'time'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;strong&gt;best&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;batch_size&lt;/code&gt; seems to be &lt;code class=&quot;highlighter-rouge&quot;&gt;256&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/85409820-40381200-b5a1-11ea-9940-9b34df4bc922.png&quot; alt=&quot;bs-time-plot&quot; /&gt;&lt;/p&gt;
+
+&lt;h6 id=&quot;2-for-non-windows-users-try-modifying-num_workers-to-see-how-it-affects-read-performance-plot-the-performance-against-the-number-of-works-employed&quot;&gt;2) For non-Windows users, try modifying num_workers to see how it affects read performance. Plot the performance against the number of works employed.&lt;/h6&gt;
+
+&lt;p&gt;Since my computer is a 2-core processor, I set the &lt;code class=&quot;highlighter-rouge&quot;&gt;workers&lt;/code&gt; as [1, 2].&lt;/p&gt;
+
+&lt;p&gt;Also, as we know our best &lt;code class=&quot;highlighter-rouge&quot;&gt;batch_size&lt;/code&gt;, I will set my &lt;code class=&quot;highlighter-rouge&quot;&gt;batch_size&lt;/code&gt; to 256.&lt;/p&gt;
+
+&lt;p&gt;The performance increased when using 2 cores, and the plot is below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;workers&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;train_iter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataLoader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mnist_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shuffle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                             &lt;span class=&quot;n&quot;&gt;num_workers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;workers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;timer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Timer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train_iter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;workers:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;, time: {:.2f}&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# workers: 1 , time: 18.48&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# workers: 2 , time: 14.81&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I made a really simple plot. Because I have only 2 data, it is hard to analyze the result of graph.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;d2l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;4.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xlabel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'workers'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ylabel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'time'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/85411032-cd2f9b00-b5a2-11ea-9669-37da22a2536e.png&quot; alt=&quot;workers-time-plot&quot; /&gt;&lt;/p&gt;
+
+&lt;h6 id=&quot;3-use-the-frameworks-api-document-website-to-see-which-other-datasets-are-available&quot;&gt;3) Use the framework’s API document website to see which other datasets are available.&lt;/h6&gt;
+
+&lt;p&gt;You can see 27 available datasets &lt;a href=&quot;https://pytorch.org/docs/stable/torchvision/datasets.html&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;MNIST
+Fashion-MNIST
+KMNIST
+EMNIST
+QMNIST
+FakeData
+COCO
+Captions
+Detection
+LSUN
+ImageFolder
+DatasetFolder
+ImageNet
+CIFAR
+STL10
+SVHN
+PhotoTour
+SBU
+Flickr
+VOC
+Cityscapes
+SBD
+USPS
+Kinetics-400
+HMDB51
+UCF101
+CelebA&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/stable/torchvision/datasets.html&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/stable/torchvision/datasets.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;About batch, SGD vs MBGD &lt;a href=&quot;https://light-tree.tistory.com/133&quot; target=&quot;_blank&quot;&gt;https://light-tree.tistory.com/133&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="image classification" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 3 - Softmax Regression</title>
+      <link href="https://hy38.github.io/D2L-3-softmax-regression" rel="alternate" type="text/html" title="D2L 3 - Softmax Regression" />
+      <published>2019-06-15T19:00:00+09:00</published>
+      <updated>2019-06-15T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-softmax-regression</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-softmax-regression">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;what-is-softmax&quot;&gt;What is Softmax&lt;/h4&gt;
+
+&lt;p&gt;Softmax is a procedure producing &lt;strong&gt;probabilities&lt;/strong&gt; that maximize the &lt;strong&gt;likelihood&lt;/strong&gt; of the observed data.&lt;/p&gt;
+
+&lt;p&gt;We define the label with the probability of the data we observe.&lt;/p&gt;
+
+&lt;h3 id=&quot;cross-entropy-loss&quot;&gt;Cross Entropy Loss&lt;/h3&gt;
+
+&lt;p&gt;We can think of the cross-entropy classification objective in two ways: (i) as maximizing the likelihood of the observed data; and (ii) as minimizing our surprise (and thus the number of bits) required to communicate the labels.&lt;/p&gt;
+
+&lt;h4 id=&quot;negative-log-likelihood-loss-function&quot;&gt;Negative Log-likelihood Loss Function&lt;/h4&gt;
+
+&lt;p&gt;What we want is to &lt;strong&gt;maximize&lt;/strong&gt; the likelihood of data. And the expression is below.&lt;/p&gt;
+
+&lt;p&gt;$P(Y \mid X) = \prod_{i=1}^n P(y^{(i)} \mid x^{(i)})$&lt;/p&gt;
+
+&lt;p&gt;For the convenience of math, we plug (natural) logarithm.&lt;/p&gt;
+
+&lt;p&gt;By plugging log to this expression, &lt;code class=&quot;highlighter-rouge&quot;&gt;product&lt;/code&gt; gets replaced by &lt;code class=&quot;highlighter-rouge&quot;&gt;sum&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Since optimizers typically do minimize a function, minimizing the expression is more advantageous rather than maximizing.&lt;/p&gt;
+
+&lt;p&gt;And fortunately, logarithm is a monotonically increasing function.&lt;/p&gt;
+
+&lt;p&gt;That is the reason we use &lt;strong&gt;NEGATIVE&lt;/strong&gt; Log-likelihood loss function!&lt;/p&gt;
+
+&lt;h3 id=&quot;exercise--softmax-regression&quot;&gt;Exercise : Softmax Regression&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-show-that-the-kullback-leibler-divergence-dpq-is-nonnegative-for-all-distributions-p-and-q-hint-use-jensens-inequality-ie-use-the-fact-that-logx-is-a-convex-function&quot;&gt;1) Show that the Kullback-Leibler divergence $D(p||q)$ is nonnegative for all distributions $p$ and $q$. Hint: use Jensen’s inequality, i.e., use the fact that $−logx$ is a convex function.&lt;/h6&gt;
+
+&lt;h6 id=&quot;2-show-that-log-sum_j-expo_j-is-a-convex-function-in-o&quot;&gt;2) Show that $\log \sum_j \exp(o_j)$ is a convex function in $o$.&lt;/h6&gt;
+
+&lt;h6 id=&quot;3-we-can-explore-the-connection-between-exponential-families-and-the-softmax-in-some-more-depth&quot;&gt;3) We can explore the connection between exponential families and the softmax in some more depth&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Compute the second derivative of the cross-entropy loss$l(y,\hat{y})$ for the softmax.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Compute the variance of the distribution given by $softmax(o)$ and show that it matches the second derivative computed above.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h6 id=&quot;4-assume-that-we-have-three-classes-which-occur-with-equal-probability-ie-the-probability-vector-is-dfrac13-dfrac13-dfrac13&quot;&gt;4) Assume that we have three classes which occur with equal probability, i.e., the probability vector is $(\dfrac{1}{3}, \dfrac{1}{3}, \dfrac{1}{3})$.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;What is the problem if we try to design a binary code for it? Can we match the entropy lower bound on the number of bits?&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Can you design a better code. Hint: what happens if we try to encode two independent observations? What if we encode  n  observations jointly?&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h6 id=&quot;5-softmax-is-a-misnomer-for-the-mapping-introduced-above-but-everyone-in-deep-learning-uses-it-the-real-softmax-is-defined-as-mathrmrealsoftmaxa-b--log-expa--expb&quot;&gt;5) Softmax is a misnomer for the mapping introduced above (but everyone in deep learning uses it). The real softmax is defined as $\mathrm{RealSoftMax}(a, b) = \log (\exp(a) + \exp(b))$.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Prove that $\mathrm{RealSoftMax}(a, b) &amp;gt; \mathrm{max}(a, b)$.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Prove that this holds for $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b)$, provided that $\lambda &amp;gt; 0$.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Show that for $\lambda \to \infty$ we have $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b) \to \mathrm{max}(a, b)$.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;What does the soft-min look like?&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Extend this to more than two numbers.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Why do we minimize NLL &lt;a href=&quot;https://stats.stackexchange.com/questions/141087/why-do-we-minimize-the-negative-likelihood-if-it-is-equivalent-to-maximization-o&quot; target=&quot;_blank&quot;&gt;https://stats.stackexchange.com/questions/141087/why-do-we-minimize-the-negative-likelihood-if-it-is-equivalent-to-maximization-o&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;about MLE &lt;a href=&quot;https://towardsdatascience.com/probability-concepts-explained-maximum-likelihood-estimation-c7b4342fdbb1&quot; target=&quot;_blank&quot;&gt;https://towardsdatascience.com/probability-concepts-explained-maximum-likelihood-estimation-c7b4342fdbb1&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;about Entropy &lt;a href=&quot;https://hyunw.kim/blog/2017/10/14/Entropy.html&quot; target=&quot;_blank&quot;&gt;https://hyunw.kim/blog/2017/10/14/Entropy.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="softmax" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 3 - Concise Implementation of Linear Regression</title>
+      <link href="https://hy38.github.io/D2L-3-linear-regression-concise" rel="alternate" type="text/html" title="D2L 3 - Concise Implementation of Linear Regression" />
+      <published>2019-06-11T19:00:00+09:00</published>
+      <updated>2019-06-11T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-linear-regression-concise</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-linear-regression-concise">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--concise-implementation-of-linear-regression&quot;&gt;Exercise : Concise Implementation of Linear Regression&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-if-we-replace-nnmseloss-with-nnmselossreductionsum-how-can-we-change-the-learning-rate-for-the-code-to-behave-identically-why&quot;&gt;1) If we replace nn.MSELoss() with nn.MSELoss(reduction=’sum’), how can we change the learning rate for the code to behave identically. Why?&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;default(mean)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MSELoss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;trainer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SGD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 0.0003235114854760468&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.00010156028292840347&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.00010140725498786196&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 0.00010207432933384553&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.0001025137462420389&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.00010135988122783601&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.00010229978943243623&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.00010266812751069665&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.00010165313869947568&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.0001017447721096687&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;reduction=’sum’&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MSELoss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'sum'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;trainer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SGD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 0.13585303723812103&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.11845800280570984&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.10822969675064087&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 0.1097884401679039&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.13867419958114624&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.13072428107261658&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.10201241821050644&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.10634788870811462&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.13075295090675354&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.11476431041955948&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;2-review-the-pytorch-documentation-to-see-what-loss-functions-and-initialization-methods-are-provided-replace-the-loss-by-hubers-loss&quot;&gt;2) Review the PyTorch documentation to see what loss functions and initialization methods are provided. Replace the loss by Huber’s loss.&lt;/h6&gt;
+
+&lt;p&gt;The name of &lt;code class=&quot;highlighter-rouge&quot;&gt;Huber's loss&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;SmoothL1Loss&lt;/code&gt; in pytorch &lt;code class=&quot;highlighter-rouge&quot;&gt;torch.nn&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;As you can see the loss below, after epoch 3, the SmoothL1Loss gives us better result.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SmoothL1Loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;trainer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SGD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 2.2134926319122314&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.456503301858902&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.0023368450347334146&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 5.8054902183357626e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 5.063020216766745e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.0628041208256036e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 5.068484824732877e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.080221308162436e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.061490446678363e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.0722886953735724e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;More information is in this &lt;a href=&quot;https://pytorch.org/docs/master/generated/torch.nn.SmoothL1Loss.html?highlight=huber&quot; target=&quot;_blank&quot;&gt;link&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, you can go &lt;a href=&quot;https://pytorch.org/docs/master/nn.html#loss-functions&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt; to see other loss functions in &lt;code class=&quot;highlighter-rouge&quot;&gt;torch.nn&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h6 id=&quot;3-how-do-you-access-the-gradient-of-net0weight&quot;&gt;3) How do you access the gradient of net[0].weight?&lt;/h6&gt;
+
+&lt;p&gt;We give the parameter net.parameters() to `torch.optim.SGD().&lt;/p&gt;
+
+&lt;p&gt;The gradient of net[0].weight can be accessed by the code below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;weight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'epoch {}, loss {}'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epoch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.1970,  0.2462]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 2.210540533065796&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.3758,  0.1829]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.45404237508773804&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0013,  0.0685]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.0022276039235293865&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0009,  0.0033]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 5.720141780329868e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[0.0016, 0.0007]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 5.089789192425087e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0009,  0.0037]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.0788381486199796e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[0.0029, 0.0022]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 5.075278750155121e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0009,  0.0028]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.072250496596098e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0058,  0.0067]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.0622238632058725e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0029,  0.0014]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.065527147962712e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/master/generated/torch.nn.MSELoss.html&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/master/generated/torch.nn.MSELoss.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/master/nn.html#loss-functions&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/master/nn.html#loss-functions&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/master/generated/torch.nn.SmoothL1Loss.html?highlight=huber&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/master/generated/torch.nn.SmoothL1Loss.html?highlight=huber&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://discuss.pytorch.org/t/how-to-print-the-computed-gradient-values-for-a-network/34179/6&quot; target=&quot;_blank&quot;&gt;https://discuss.pytorch.org/t/how-to-print-the-computed-gradient-values-for-a-network/34179/6&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="linear regression" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 3 - Linear Regression Implementation from Scratch</title>
+      <link href="https://hy38.github.io/D2L-3-linear-regression-implementaion-from-scratch" rel="alternate" type="text/html" title="D2L 3 - Linear Regression Implementation from Scratch" />
+      <published>2019-06-08T19:00:00+09:00</published>
+      <updated>2019-06-08T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-linear-regression-implementaion-from-scratch</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-linear-regression-implementaion-from-scratch">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--linear-regression-implementation-from-scratch&quot;&gt;Exercise : Linear Regression Implementation from Scratch&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-what-would-happen-if-we-were-to-initialize-the-weights-w0-would-the-algorithm-still-work&quot;&gt;1) What would happen if we were to initialize the weights $w=0$. Would the algorithm still work?&lt;/h6&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zeros&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requires_grad&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[0.],&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;# [0.]], requires_grad=True)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 9.015191078186035&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 5.008845329284668&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 2.783064842224121&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 1.5464041233062744&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.8592801094055176&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.4775138795375824&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.26536378264427185&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.1474914401769638&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.08198854327201843&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.045585036277770996&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The initialization to zero did not matter to the training algorithm.&lt;/p&gt;
+
+&lt;h6 id=&quot;2-assume-that-you-are-georg-simon-ohm-trying-to-come-up-with-a-model-between-voltage-and-current-can-you-use-auto-differentiation-to-learn-the-parameters-of-your-model&quot;&gt;2) Assume that you are Georg Simon Ohm trying to come up with a model between voltage and current. Can you use auto differentiation to learn the parameters of your model.&lt;/h6&gt;
+
+&lt;p&gt;The Ohm’s law is a relationship between voltage, current, resistance. Setting current as the target value $y$, and the voltage as $x$, we get this equation.&lt;/p&gt;
+
+&lt;p&gt;$I = \dfrac{V}{R}, y = \dfrac{x}{R}$&lt;/p&gt;
+
+&lt;p&gt;By using mean-squared loss function with SGD, we can use &lt;code class=&quot;highlighter-rouge&quot;&gt;backward()&lt;/code&gt; as follows.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Minibatch loss in X and y&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Compute gradient on l with respect to [w,b]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;3-can-you-use-plancks-law-to-determine-the-temperature-of-an-object-using-spectral-energy-density&quot;&gt;3) Can you use Planck’s Law to determine the temperature of an object using spectral energy density?&lt;/h6&gt;
+
+&lt;p&gt;Planck’s law is the equation among &lt;code class=&quot;highlighter-rouge&quot;&gt;wavelength&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;spectral energy density&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;temperture&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/84217437-1b569000-ab07-11ea-97f6-1af76307d92d.png&quot; alt=&quot;planck_law&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;By transpositing I and T, we get the equation below.&lt;/p&gt;
+
+&lt;p&gt;$T(I, v) = \dfrac{hv}{Kln \dfrac{2hv^3}{c^2I}}$&lt;/p&gt;
+
+&lt;h6 id=&quot;4-what-are-the-problems-you-might-encounter-if-you-wanted-to-compute-the-second-derivatives-how-would-you-fix-them&quot;&gt;4) What are the problems you might encounter if you wanted to compute the second derivatives? How would you fix them?&lt;/h6&gt;
+
+&lt;p&gt;The first derivative may be a constant which goes to 0 when we derivate once more.&lt;/p&gt;
+
+&lt;p&gt;Also, the function might not be derivable.&lt;/p&gt;
+
+&lt;h6 id=&quot;5-why-is-the-reshape-function-needed-in-the-squared_loss-function&quot;&gt;5) Why is the reshape function needed in the squared_loss function?&lt;/h6&gt;
+
+&lt;p&gt;y_hat is the result of matrix multiplication between $X$ and $w$.&lt;/p&gt;
+
+&lt;p&gt;The shape of matmul(X, w) would be (1000, 1).&lt;/p&gt;
+
+&lt;p&gt;Since we previously set the batch size batch_size to 10, the loss shape l for each minibatch is (10, 1).&lt;/p&gt;
+
+&lt;p&gt;The shape of y_hat is (10, 1) and the shape of y is (10).&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'y_hat shape:'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'y shape: '&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# y_hat shape: torch.Size([10, 1]) y shape:  torch.Size([10])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;6-experiment-using-different-learning-rates-to-find-out-how-fast-the-loss-function-value-drops&quot;&gt;6) Experiment using different learning rates to find out how fast the loss function value drops.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.03, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 8.98647689819336&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 4.993009567260742&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 2.7741053104400635&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 1.541479229927063&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.8565448522567749&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.47596117854118347&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.2645193934440613&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.1470237821340561&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.08172017335891724&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.045438218861818314&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.1, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 2.2391698360443115&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.3058370053768158&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.04183046892285347&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 0.005764374043792486&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.0008321439381688833&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.00015854007506277412&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 6.705385749228299e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.424357368610799e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.2451756346272305e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.219781451160088e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.3, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# ch 1, loss 0.041470203548669815&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.0001545503328088671&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 5.335054447641596e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 5.316684837453067e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 5.3126728744246066e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.326157042873092e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 5.310575943440199e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.3188410674920306e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.316302849678323e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.317722025210969e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.01, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 13.367563247680664&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 10.992039680480957&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 9.03872013092041&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 7.43253231048584&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 6.1117939949035645&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.025759696960449&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 4.132733345031738&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 3.398400068283081&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 2.794539451599121&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 2.297992706298828&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The best learning rate above is 0.3.&lt;/p&gt;
+
+&lt;h6 id=&quot;7-if-the-number-of-examples-cannot-be-divided-by-the-batch-size-what-happens-to-the-data_iter-functions-behavior&quot;&gt;7) If the number of examples cannot be divided by the batch size, what happens to the data_iter function’s behavior?&lt;/h6&gt;
+
+&lt;p&gt;In Pytorch DataLoader, there is a parameter called drop_last. It makes the last batch smaller by default.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;drop_last (bool, optional): set to ``True`` to drop the last incomplete batch,
+    if the dataset size is not divisible by the batch size. If ``False`` and
+    the size of dataset is not divisible by the batch size, then the last batch
+    will be smaller. (default: ``False``)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/stable/torch.html&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/stable/torch.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/1.1.0/_modules/torch/utils/data/dataloader.html&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/1.1.0/_modules/torch/utils/data/dataloader.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="linear regression" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 3 - Linear Regression</title>
+      <link href="https://hy38.github.io/D2L-3-linear-regression" rel="alternate" type="text/html" title="D2L 3 - Linear Regression" />
+      <published>2019-06-06T19:00:00+09:00</published>
+      <updated>2019-06-06T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-linear-regression</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-linear-regression">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;prediction-vs-inference&quot;&gt;Prediction vs Inference&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Prediction&lt;/code&gt; means using the model to predict the outcomes for &lt;strong&gt;new data points&lt;/strong&gt;. The word &lt;code class=&quot;highlighter-rouge&quot;&gt;prediction&lt;/code&gt; is generally used in machine learnings and deep learnings.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Inference&lt;/code&gt; means using the model to learn about the data generation process. It denotes estimating parameters based on a dataset. It is generally used in statistics.&lt;/p&gt;
+
+&lt;h3 id=&quot;mlemaximum-likelihood-estimation-vs-mapmaximum-a-posteriori-estimation&quot;&gt;MLE(Maximum Likelihood Estimation) vs MAP(Maximum a Posteriori Estimation)&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;MLE is one of the method of estimation $\theta$, making the maximum likelihood.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;$\hat \theta = \arg\max_\theta \mathcal L (\theta;X) = \arg\max_\theta f(X|\theta)$&lt;/p&gt;
+
+&lt;p&gt;MLE is very dependent on the observation (or given data).&lt;/p&gt;
+
+&lt;p&gt;We usually use Maximum &lt;strong&gt;Log&lt;/strong&gt;-Likelihood Estimation due to the simple computation.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Because MLE is very dependent on the observation, we bring up another method called MAP. MAP is based on MLE and Bayes’s Theorem.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;$\hat \theta = \arg\max_\theta f(\theta|X)$&lt;/p&gt;
+
+&lt;p&gt;Because MAP uses both observation data and assumptions of prior data, MAP makes us get more general parameter estimation than MLE.&lt;/p&gt;
+
+&lt;p&gt;However, to use the method of MAP, we need to know about $f(\theta)$.&lt;/p&gt;
+
+&lt;p&gt;If we have enough assumptions about &lt;code class=&quot;highlighter-rouge&quot;&gt;prior&lt;/code&gt; data we can make better estimation.&lt;/p&gt;
+
+&lt;p&gt;Of course the &lt;code class=&quot;highlighter-rouge&quot;&gt;prior&lt;/code&gt; data is very important since the setimation refers to the prior data. For example, if we have bad prior data, the estimation also gets bad.&lt;/p&gt;
+
+&lt;h3 id=&quot;exercise--linear-regression&quot;&gt;Exercise : Linear Regression&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-assume-that-we-have-some-data--x_1-ldots-x_n-in-mathbbr--our-goal-is-to-find-a-constant-b-such-that-sum_i-x_i---b2-is-minimized&quot;&gt;1) Assume that we have some data  $x_1, \ldots, x_n \in \mathbb{R}$ . Our goal is to find a constant $b$ such that $\sum_i (x_i - b)^2$ is minimized.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Find a closed-form solution for the optimal value of b .&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The problem comes to be minimizing $\sum x_i - b$. It can be represented as $(x_1 + x_2 + … + x_n) - (nb)$.
+Since we can notate the $x$s as a vector, minimizing this function to zero is as follows.&lt;/p&gt;
+
+&lt;p&gt;$b = \dfrac{\mathbf{x}}{n}$&lt;/p&gt;
+
+&lt;p&gt;You may have noticed that it is the average of data $\mathbf{x}$.&lt;/p&gt;
+
+&lt;p&gt;Also, we can think $b$ in $x_i - b$ as a point that minimizes the $x$ values in a &lt;code class=&quot;highlighter-rouge&quot;&gt;number line&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;How does this problem and its solution relate to the normal distribution?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since $b$ is the average of data $\mathbf{x}$, we can denote $(x_i - b)$ in a different way as $\mathbf{X} - \mu$.&lt;/p&gt;
+
+&lt;h6 id=&quot;2-derive-the-closed-form-solution-to-the-optimization-problem-for-linear-regression-with-squared-error-to-keep-things-simple-you-can-omit-the-bias-b-from-the-problem-we-can-do-this-in-principled-fashion-by-adding-one-column-to-x-consisting-of-all-ones&quot;&gt;2) Derive the closed-form solution to the optimization problem for linear regression with squared error. To keep things simple, you can omit the bias $b$ from the problem (we can do this in principled fashion by adding one column to $X$ consisting of all ones).&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Write out the optimization problem in matrix and vector notation (treat all the data as a single matrix, all the target values as a single vector).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;$L(\mathbf{w}, b) =\frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) =\frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2$&lt;/p&gt;
+
+&lt;p&gt;By vectorizing the above expression, we get the expression below.&lt;/p&gt;
+
+&lt;p&gt;$L(\mathbf{w}, b) = \frac{1}{n} \frac{1}{2}(\mathbf{X}\mathbf{w} - \mathbf{y})^2$&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Compute the gradient of the loss with respect to $w$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The gradient of the equation with respect to $w$ is as below.&lt;/p&gt;
+
+&lt;p&gt;$\dfrac{1}{n} (\mathbf{X} \mathbf{w} - \mathbf{y}) X$.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Find the closed form solution by setting the gradient equal to zero and solving the matrix equation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since $\dfrac{1}{n} (\mathbf{X} \mathbf{w} - \mathbf{y}) X = 0$, we remove the $\dfrac{1}{n}$ term, $X$ term.&lt;/p&gt;
+
+&lt;p&gt;Thus, the equation changes as follows.&lt;/p&gt;
+
+&lt;p&gt;$\mathbf{X} \mathbf{w} - \mathbf{y} = 0$.&lt;/p&gt;
+
+&lt;p&gt;Then, we will multiply $mathbf{X}^T$ and develop the equation as&lt;/p&gt;
+
+&lt;p&gt;$\mathbf{X}^T \mathbf{X} \mathbf{w} - \mathbf{X}^T \mathbf{y} = 0$.&lt;/p&gt;
+
+&lt;p&gt;Finally, we get this &lt;strong&gt;normal equation&lt;/strong&gt; below.&lt;/p&gt;
+
+&lt;p&gt;$\mathbf{w} = (\mathbf X^\top \mathbf X)^{-1}\mathbf X^\top \mathbf{y}.$&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;When might this be better than using stochastic gradient descent? When might this method break?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;(1) Normal equation method&lt;/p&gt;
+
+&lt;p&gt;Because this method is non-iterative, this normal equation method is better when we deal datas which size is under 10000. But, this method does inverse matrix calculation, having time-complexity of $O(n^3)$.&lt;/p&gt;
+
+&lt;p&gt;Also, we do not have to care about the learning rate.&lt;/p&gt;
+
+&lt;p&gt;(2) Stochastic gradient descent&lt;/p&gt;
+
+&lt;p&gt;On the other hand, using stochastic gradient descent is useful when dealing with large datas(n $\geq$ 10000).&lt;/p&gt;
+
+&lt;p&gt;This method has time-complexity of $O(kn^2)$.&lt;/p&gt;
+
+&lt;p&gt;However, we need special care for learning rate to use this method.&lt;/p&gt;
+
+&lt;h6 id=&quot;3-assume-that-the-noise-model-governing-the-additive-noise-ϵ-is-the-exponential-distribution-that-is-pepsilon--frac12-exp-epsilon&quot;&gt;3) Assume that the noise model governing the additive noise ϵ is the exponential distribution. That is, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Write out the negative log-likelihood of the data under the model $-\log P(Y \mid X)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;$-\log p(\mathbf y|\mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma^2) + \frac{1}{2 \sigma^2} \left(y^{(i)} - \mathbf{w}^\top \mathbf{x}^{(i)} - b\right)^2.$&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Can you find a closed form solution?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We want to find the solution of $w$ that minimizes the NLL(Negative Log-Likelihood) function.&lt;/p&gt;
+
+&lt;p&gt;Since this function is dependent on $w$ and $b$, we could ignore the first term and the $\sigma$.&lt;/p&gt;
+
+&lt;p&gt;Doing the derivative and setting the gradient to &lt;em&gt;zero&lt;/em&gt; comes up with this solution below.&lt;/p&gt;
+
+&lt;p&gt;$w = (X^TX)^{-1}X^TY.$&lt;/p&gt;
+
+&lt;p&gt;It is same with normal equation.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Suggest a stochastic gradient descent algorithm to solve this problem. What could possibly go wrong (hint - what happens near the stationary point as we keep on updating the parameters). Can you fix this?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;MLE MAP post &lt;a href=&quot;https://sanghyukchun.github.io/58/&quot; target=&quot;_blank&quot;&gt;https://sanghyukchun.github.io/58/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;why NLL? &lt;a href=&quot;https://ratsgo.github.io/deep%20learning/2017/09/24/loss/&quot; target=&quot;_blank&quot;&gt;https://ratsgo.github.io/deep%20learning/2017/09/24/loss/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;MLE &lt;a href=&quot;https://ratsgo.github.io/statistics/2017/09/23/MLE/&quot; target=&quot;_blank&quot;&gt;https://ratsgo.github.io/statistics/2017/09/23/MLE/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.datascienceblog.net/post/commentary/inference-vs-prediction/&quot; target=&quot;_blank&quot;&gt;https://www.datascienceblog.net/post/commentary/inference-vs-prediction/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;/MLcoursera-2-1&quot; target=&quot;_blank&quot;&gt;https://hy38.github.io/MLcoursera-2-1&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;edwith normal equation &lt;a href=&quot;https://www.edwith.org/linearalgebra4ai/lecture/24131/&quot; target=&quot;_blank&quot;&gt;https://www.edwith.org/linearalgebra4ai/lecture/24131/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="linear regression" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 2 - Probability</title>
+      <link href="https://hy38.github.io/D2L-2-probability" rel="alternate" type="text/html" title="D2L 2 - Probability" />
+      <published>2019-06-04T19:00:00+09:00</published>
+      <updated>2019-06-04T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-2-probability</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-2-probability">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--probability&quot;&gt;Exercise : Probability&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-we-conducted-𝑚500-groups-of-experiments-where-each-group-draws-𝑛10-samples-vary-𝑚-and-𝑛-observe-and-analyze-the-experimental-results&quot;&gt;1) We conducted 𝑚=500 groups of experiments where each group draws 𝑛=10 samples. Vary 𝑚 and 𝑛. Observe and analyze the experimental results.&lt;/h6&gt;
+
+&lt;p&gt;I have varied m and n arbitrary and got these graphs below.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Increasing drawing samples(n)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;counts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multinomial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fair_probs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/83719462-1b234400-a672-11ea-9b68-ea60fb6f6c58.png&quot; alt=&quot;500m_1000n&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;counts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multinomial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fair_probs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/83719608-63426680-a672-11ea-9cf7-2a5d9bb96e8a.png&quot; alt=&quot;500m_100000n&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Increasing number of groups(m)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;counts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multinomial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fair_probs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;50000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/83719738-b3b9c400-a672-11ea-9be4-aceab07e70b9.png&quot; alt=&quot;50000m_10n&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Increasing both number of groups and the samples each group draws.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;counts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multinomial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fair_probs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;50000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/83719871-f8455f80-a672-11ea-90e5-9fe4d7237e7f.png&quot; alt=&quot;50000m_1000n&quot; /&gt;&lt;/p&gt;
+
+&lt;h6 id=&quot;2-given-two-events-with-probability-𝑃a-and-𝑃b-compute-upper-and-lower-bounds-on-𝑃ab-and-𝑃ab-hint-display-the-situation-using-a-venn-diagram&quot;&gt;2) Given two events with probability 𝑃(A) and 𝑃(B), compute upper and lower bounds on 𝑃(A∪B) and 𝑃(A∩B). (Hint: display the situation using a Venn Diagram.)&lt;/h6&gt;
+
+&lt;p&gt;$ 0 \leq 𝑃(A∪B) \leq 1 $&lt;/p&gt;
+
+&lt;p&gt;$ 0 \leq 𝑃(A∩B) \leq 0.5$&lt;/p&gt;
+
+&lt;p&gt;The upper bound of 𝑃(A∪B) is when A and B is mutually exclusive. If P(A) + P(B) = 1, it becomes the upper bound. Also, the upper bound of 𝑃(A∩B) is when A is in B or B is in A. If P(A) = P(B) = 0.5, it becomes the upper bound.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, the lower bound 𝑃(A∪B) is when A is in B or vice versa. If P(A) = P(B) = 0, it becomes the lower bound. The lower bound of 𝑃(A∩B) is when A and B is mutually exclusive. Then the lower bound of 𝑃(A∩B) becomes 0.&lt;/p&gt;
+
+&lt;p&gt;You can notice that these two are opposite.&lt;/p&gt;
+
+&lt;h6 id=&quot;3-assume-that-we-have-a-sequence-of-random-variables-say-𝐴-𝐵-and-𝐶-where-𝐵-only-depends-on-𝐴-and-𝐶-only-depends-on-𝐵-can-you-simplify-the-joint-probability-𝑃𝐴𝐵𝐶-hint-this-is-a-markov-chain&quot;&gt;3) Assume that we have a sequence of random variables, say 𝐴, 𝐵, and 𝐶, where 𝐵 only depends on 𝐴, and 𝐶 only depends on 𝐵, can you simplify the joint probability 𝑃(𝐴,𝐵,𝐶)? (Hint: this is a Markov Chain.)&lt;/h6&gt;
+
+&lt;p&gt;We need to analyze the relationship of A, B, C first.&lt;/p&gt;
+
+&lt;p&gt;Because C only depends on B, C only occurs when B occurs. So P(B) = P(C).&lt;/p&gt;
+
+&lt;p&gt;Similarly, because B depends on A, B only occurs when A occurs. So P(A) = P(B).&lt;/p&gt;
+
+&lt;p&gt;Combining these two relations, P(A) = P(B) = P(C).&lt;/p&gt;
+
+&lt;p&gt;Thus, P(A, B, C) is P(A) (or P(B) or P(C) since the three are same).&lt;/p&gt;
+
+&lt;h6 id=&quot;4-in-section-2626-the-first-test-is-more-accurate-why-not-just-run-the-first-test-a-second-time&quot;&gt;4) In &lt;a href=&quot;https://d2l.ai/chapter_preliminaries/probability.html#subsec-probability-hiv-app&quot; target=&quot;_blank&quot;&gt;Section 2.6.2.6&lt;/a&gt;, the first test is more accurate. Why not just run the first test a second time?&lt;/h6&gt;
+
+&lt;p&gt;Using the different test, the two test get conditionally independent given the disease state of the patient.&lt;/p&gt;
+
+&lt;p&gt;So, by conjuncting with the first test, will have a lower false discovery rate.&lt;/p&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://web.stanford.edu/class/archive/ee/ee178/ee178.1172/hw/hw3_sn.pdf&quot; target=&quot;_blank&quot;&gt;http://web.stanford.edu/class/archive/ee/ee178/ee178.1172/hw/hw3_sn.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="probability" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 2 - autograd</title>
+      <link href="https://hy38.github.io/D2L-2-autograd" rel="alternate" type="text/html" title="D2L 2 - autograd" />
+      <published>2019-06-02T19:00:00+09:00</published>
+      <updated>2019-06-02T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-2-autograd</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-2-autograd">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--autograd&quot;&gt;Exercise : autograd&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-why-is-the-second-derivative-much-more-expensive-to-compute-than-the-first-derivative&quot;&gt;1) Why is the second derivative much more expensive to compute than the first derivative?&lt;/h6&gt;
+
+&lt;p&gt;First of all, from the perspective of memory, you need to store the first derivative result.&lt;/p&gt;
+
+&lt;p&gt;Also, you need extra time for first derivative result to be calculated.&lt;/p&gt;
+
+&lt;h6 id=&quot;2-after-running-ybackward-immediately-run-it-again-and-see-what-happens&quot;&gt;2) After running y.backward(), immediately run it again and see what happens.&lt;/h6&gt;
+
+&lt;p&gt;The kernel died. I don’t get the reason it happens.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;autograd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# y is a vector&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;3-in-the-control-flow-example-where-we-calculate-the-derivative-of-d-with-respect-to-a-what-would-happen-if-we-changed-the-variable-a-to-a-random-vector-or-matrix-at-this-point-the-result-of-the-calculation-fa-is-no-longer-a-scalar-what-happens-to-the-result-how-do-we-analyze-this&quot;&gt;3) In the control flow example where we calculate the derivative of d with respect to a, what would happen if we changed the variable a to a random vector or matrix. At this point, the result of the calculation f(a) is no longer a scalar. What happens to the result? How do we analyze this?&lt;/h6&gt;
+
+&lt;p&gt;Changing $a$ to a random matrix, the result $d = f(a)$ comes to be a matrix having same size of $a$.&lt;/p&gt;
+
+&lt;p&gt;Analizing the $d = f(a)$ for a random matrix $a$, it is very similar when $a$ is a scalar value.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;==&lt;/code&gt; calculation results some of the elements to be &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;, but it is because of the floating point division. You can see it below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[ 1.0731696   1.8307649   0.12017461 -1.1468065 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-0.9711102   0.05383795 -0.77569664 -2.5074806 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-0.7882176  -0.59164983  0.7417728   0.8586049 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-1.4734439  -0.22794184 -1.0730928   0.20131476]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-1.0424827   0.35005474 -1.3278849   0.5360521 ]]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attach_grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;autograd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[ 27473.14    46867.582    3076.47   -29358.246 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-24860.422    1378.2517 -19857.834  -64191.504 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-20178.371  -15146.235   18989.383   21980.285 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-37720.164   -5835.311  -27471.176    5153.6577]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [-26687.559    8961.401  -33993.855   13722.934 ]]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# array([[ True,  True,  True,  True],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True, False,  True,  True],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True,  True,  True,  True],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True,  True,  True, False],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True,  True, False,  True]])&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[25600. 25600. 25600. 25600.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600. 25600. 25600. 25600.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600. 25600. 25600. 25600.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600. 25600. 25600. 25600.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600. 25600. 25600. 25600.]]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[25600.    25600.    25600.    25600.   ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600.    25600.002 25600.    25600.   ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600.    25600.    25600.    25600.   ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600.    25600.    25600.    25599.998]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [25600.    25600.    25600.002 25600.   ]]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;4-redesign-an-example-of-finding-the-gradient-of-the-control-flow-run-and-analyze-the-result&quot;&gt;4) Redesign an example of finding the gradient of the control flow. Run and analyze the result.&lt;/h6&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;f2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Since $d = -100a^2 + 200a$, then $d’ = a.grad = -200a + 200$.&lt;/p&gt;
+
+&lt;p&gt;As a result, a.grad will have the value of c’, d.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 10.241542&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attach_grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;autograd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 9994.166&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# -48.30835&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# -48.30835&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# True&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that the &lt;code class=&quot;highlighter-rouge&quot;&gt;True&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;False&lt;/code&gt; can be changed by floating point division.&lt;/p&gt;
+
+&lt;h6 id=&quot;5-let-𝑓𝑥sin𝑥-plot-𝑓𝑥-and-𝑑𝑓𝑥𝑑𝑥-where-the-latter-is-computed-without-exploiting-that-𝑓𝑥cos𝑥&quot;&gt;5) Let 𝑓(𝑥)=sin(𝑥). Plot 𝑓(𝑥) and 𝑑𝑓(𝑥)𝑑𝑥, where the latter is computed without exploiting that 𝑓′(𝑥)=cos(𝑥).&lt;/h6&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matplotlib&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inline&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;d2l&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;IPython&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;display&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attach_grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;autograd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;sin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [ 1.          0.9950042   0.9800666   0.9553365   0.921061    0.87758255&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   0.8253356   0.7648422   0.6967067   0.6216099   0.5403023   0.4535961&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   0.3623577   0.26749876  0.16996716  0.0707372  -0.02919955 -0.12884454&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  -0.22720216 -0.32328954 -0.41614684 -0.5048462  -0.58850116 -0.666276&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  -0.7373938  -0.8011436  -0.85688883 -0.90407217 -0.9422223  -0.9709582 ]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;d2l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'x'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;legend&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'sin'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'cos'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/83609736-a391de00-a5b9-11ea-86a2-8807f734a326.png&quot; alt=&quot;sin_cos&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Moreover, the graph x.grad seems to be cosine. So, lets see if it is.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [ True  True  True  True  True  True  True  True  True  True  True  True&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   True  True  True  True  True  True  True  True  True  True  True  True&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   True  True  True  True  True  True]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [1.         1.         1.         1.0000001  1.         1.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  1.         1.         1.         1.         0.99999994 1.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  1.         1.         1.         1.         0.99999994 1.0000001&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  1.         1.         0.99999994 1.         1.         1.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  1.0000001  0.9999999  1.         1.         1.         0.99999994]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Yes, it is cosine.&lt;/p&gt;
+
+&lt;p&gt;&lt;del&gt;&lt;strong&gt;6) In a second-price auction (such as in eBay or in computational advertising), the winning bidder pays the second-highest price. Compute the gradient of the final price with respect to the winning bidder’s bid using autograd. What does the result tell you about the mechanism? If you are curious to learn more about second-price auctions, check out the paper by Edelman et al. :cite:Edelman.Ostrovsky.Schwarz.2007.&lt;/strong&gt;&lt;/del&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="autograd" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 2 - Calculus</title>
+      <link href="https://hy38.github.io/D2L-2-calculus" rel="alternate" type="text/html" title="D2L 2 - Calculus" />
+      <published>2019-06-01T19:00:00+09:00</published>
+      <updated>2019-06-01T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-2-calculus</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-2-calculus">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--calculus-basic&quot;&gt;Exercise : Calculus (Basic)&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-plot-the-function-y--fx--x3---dfrac1x-and-its-tangent-line-when-x--1&quot;&gt;1) Plot the function $y = f(x) = x^3 - \dfrac{1}{x}$ and its tangent line when $x = 1$.&lt;/h6&gt;
+
+&lt;p&gt;Lets first define the function y in python. After, what I have to do is finding the tangent line of y when x is 1.&lt;/p&gt;
+
+&lt;p&gt;The derivative functinon y’ is $3x^2 + \dfrac{1}{x^2}$, and the tangent line would be $y = ax + b$. We can get &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; as below.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;y’(1) equals to 3 + 1 = 4, which is &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;. So the tangent line is $y = 4x + b$.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Using the fact that y, y’ passes cordinate (1,0), &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; comes to be &lt;code class=&quot;highlighter-rouge&quot;&gt;-4&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So the tangent line is $y = 4x - 4$.&lt;/p&gt;
+
+&lt;p&gt;Using python, we can simply plot it.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;f2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;x2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'x2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'f2(x)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;legend&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'f2(x)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'Tangent line (x2=1)'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/83482268-d87b3380-a4da-11ea-9761-c7fabce37097.png&quot; alt=&quot;tangent_line&quot; /&gt;&lt;/p&gt;
+
+&lt;h6 id=&quot;2-find-the-gradient-of-the-function-fx--3x_12--5ex_2&quot;&gt;2) Find the gradient of the function $f(x) = 3x_1^2 + 5e^{x_2}$.&lt;/h6&gt;
+
+&lt;p&gt;By differentiating the function with respect to each variable $x_1$, $x_2$ can we get the gradient of f(x).&lt;/p&gt;
+
+&lt;p&gt;$\frac{\partial f}{\partial x_{1}} = 6 x_{1}$&lt;/p&gt;
+
+&lt;p&gt;$\frac{\partial f}{\partial x_{2}} = 5 e^{x_{2}}$&lt;/p&gt;
+
+&lt;p&gt;$\nabla f(x) = (6 x_{1}, 5 e^{x_{2}})$&lt;/p&gt;
+
+&lt;h6 id=&quot;3-what-is-the-gradient-of-the-function-fmathbfx--mathbfx_2&quot;&gt;3) What is the gradient of the function $f(\mathbf{x}) = ||\mathbf{x}||_2$?&lt;/h6&gt;
+
+&lt;p&gt;Since $ ||\mathbf{x}||_2 = (x_1^2 + x_2^2 + …)^\frac{1}{2} $,&lt;/p&gt;
+
+&lt;p&gt;when you partially derivate each $x_i$s,&lt;/p&gt;
+
+&lt;p&gt;you can get the answer : $\nabla_{\mathbf{x}} ||\mathbf{x}||_2 = \frac{\mathbf{x}}{||\mathbf{x}||_2}$&lt;/p&gt;
+
+&lt;h6 id=&quot;4-can-you-write-out-the-chain-rule-for-the-case-where-u--fx-y-z-and-x--xa-b-y--ya-b-and-z--za-b&quot;&gt;4) Can you write out the chain rule for the case where $u = f(x, y, z)$ and $x = x(a, b), y = y(a, b)$, and $z = z(a, b)$?&lt;/h6&gt;
+
+&lt;p&gt;$\frac{\partial u}{\partial a}=\frac{\partial u}{\partial x}\frac{\partial x}{\partial a}+\frac{\partial u}{\partial y}\frac{\partial y}{\partial a}+\frac{\partial u}{\partial z}\frac{\partial z}{\partial a}$&lt;/p&gt;
+
+&lt;p&gt;$\frac{\partial u}{\partial b}=\frac{\partial u}{\partial x}\frac{\partial x}{\partial b}+\frac{\partial u}{\partial y}\frac{\partial y}{\partial b}+\frac{\partial u}{\partial z}\frac{\partial z}{\partial b}$&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="calculus" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 2 - Linear Algebra</title>
+      <link href="https://hy38.github.io/D2L-2-linear-algebra" rel="alternate" type="text/html" title="D2L 2 - Linear Algebra" />
+      <published>2019-05-29T19:00:00+09:00</published>
+      <updated>2019-05-29T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-2-linear-algebra</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-2-linear-algebra">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--linear-algebra-basic&quot;&gt;Exercise : Linear Algebra (Basic)&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-prove-that-the-transpose-of-a-matrix-as-transpose-is--a--𝐀t--a&quot;&gt;1) Prove that the transpose of a matrix A’s transpose is  A : $(𝐀^T)^⊤ = A$.&lt;/h6&gt;
+
+&lt;p&gt;By transposing matrix A size of n x m, $A_(ij)$ turns into $A_(ji)$. Transposing $A_(ji)$ turns to be $A_(ij)$, the origin A itself.&lt;/p&gt;
+
+&lt;h6 id=&quot;2-given-two-matrices-a-and-b-show-that-the-sum-of-transposes-is-equal-to-the-transpose-of-a-sum-at--bt--a--bt&quot;&gt;2) Given two matrices A and B, show that the sum of transposes is equal to the transpose of a sum: $A^T + B^T = (A + B)^T$.&lt;/h6&gt;
+
+&lt;p&gt;This can be shown with some short line of codes below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;At&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Bt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;At&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# array([[ True,  True,  True,  True],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True,  True,  True,  True],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True,  True,  True,  True],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True,  True,  True,  True],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#        [ True,  True,  True,  True]])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;3-given-any-square-matrix-a-is-a--at--always-symmetric-why&quot;&gt;3) Given any square matrix A, is $A + A^T$  always symmetric? Why?&lt;/h6&gt;
+
+&lt;p&gt;What means a matrix to be &lt;code class=&quot;highlighter-rouge&quot;&gt;**symmetric**&lt;/code&gt;? What is &lt;code class=&quot;highlighter-rouge&quot;&gt;**symmetric matrix**&lt;/code&gt;?&lt;/p&gt;
+
+&lt;p&gt;With a matrix A given, when $A_(ij) = A_(ji)$, we call this a symmetric matrix.&lt;/p&gt;
+
+&lt;p&gt;Thus, the matrix must be a square matrix.&lt;/p&gt;
+
+&lt;p&gt;Now then, is $A + A^T$ always a symmetric matrix?&lt;/p&gt;
+
+&lt;p&gt;Assuming A to be a square matix, lets call this new matrix C, $C = A + A^T$.&lt;/p&gt;
+
+&lt;p&gt;The element of C would be $C_(ij) or C_(ji) or C_(ii)$.&lt;/p&gt;
+
+&lt;p&gt;$C_(ij)$ would be $A_(ij) + A(ji)$, and so as $C_(ji)$.&lt;/p&gt;
+
+&lt;p&gt;Conclusively, we get a new matrix C to be always a symmetric matrix.&lt;/p&gt;
+
+&lt;h6 id=&quot;4-we-defined-the-tensor-x-of-shape-2-3-4-in-this-section-what-is-the-output-of-lenx&quot;&gt;4) We defined the tensor X of shape (2, 3, 4) in this section. What is the output of len(X)?&lt;/h6&gt;
+
+&lt;p&gt;We have made a Tensor X as below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# array([[[ 0.,  1.,  2.,  3.],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#         [ 4.,  5.,  6.,  7.],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#         [ 8.,  9., 10., 11.]],&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#        [[12., 13., 14., 15.],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#         [16., 17., 18., 19.],&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#         [20., 21., 22., 23.]]])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The output of len(X) is &lt;code class=&quot;highlighter-rouge&quot;&gt;2&lt;/code&gt; as shown below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;5-for-a-tensor-x-of-arbitrary-shape-does-lenx-always-correspond-to-the-length-of-a-certain-axis-of-x-what-is-that-axis&quot;&gt;5) For a tensor X of arbitrary shape, does len(X) always correspond to the length of a certain axis of X? What is that axis?&lt;/h6&gt;
+
+&lt;p&gt;It corresponds to the length of axis 0.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 2&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 3&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;6-run-a--asumaxis1-and-see-what-happens-can-you-analyze-the-reason&quot;&gt;6) Run A / A.sum(axis=1) and see what happens. Can you analyze the reason?&lt;/h6&gt;
+
+&lt;p&gt;Actually the matrix(or the tensor) A is not clearly defined. So we should think about 2 different cases.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A is a 5 x 4 matrix&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;By summing up with axis=1, it means this calculation reduces the dimension axis=1. This summation result would be a vector shape of (5, ).&lt;/p&gt;
+
+&lt;p&gt;So, the A / A.sum(axis=1) would be a calculation of (5 x 4) / (5, ) resulting an error. But, it works when you reshape the vector to the shape of (5, 1) as below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[ 0.  1.  2.  3.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [ 4.  5.  6.  7.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [ 8.  9. 10. 11.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [12. 13. 14. 15.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [16. 17. 18. 19.]]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [ 6. 22. 38. 54. 70.]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# (5,)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[0.         0.16666667 0.33333334 0.5       ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.18181819 0.22727273 0.27272728 0.3181818 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.21052632 0.23684211 0.2631579  0.28947368]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.22222222 0.24074075 0.25925925 0.2777778 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.22857143 0.24285714 0.25714287 0.27142859]]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A is a 4 x 4 matrix&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The case when matrix A is a square matrix, the A / A.sum(axis=1) calculation would result (4 x 4) matrix since it invokes broadcasting.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[ 0.  1.  2.  3.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [ 4.  5.  6.  7.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [ 8.  9. 10. 11.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [12. 13. 14. 15.]]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [ 6. 22. 38. 54.]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# (4,)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# (4, 4)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[0.         0.04545455 0.05263158 0.05555556]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.6666667  0.22727273 0.15789473 0.12962963]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [1.3333334  0.4090909  0.2631579  0.2037037 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [2.         0.59090906 0.36842105 0.2777778 ]]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[0.         0.16666667 0.33333334 0.5       ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.18181819 0.22727273 0.27272728 0.3181818 ]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.21052632 0.23684211 0.2631579  0.28947368]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [0.22222222 0.24074075 0.25925925 0.2777778 ]]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A is a 4 x 2 x 4 tensor&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It was a long way to show what &lt;code class=&quot;highlighter-rouge&quot;&gt;axis=1&lt;/code&gt; does. But in tensor, it is more easier to understand.&lt;/p&gt;
+
+&lt;p&gt;You can just &lt;strong&gt;reduce&lt;/strong&gt; the dimension of axis=1. In 3-dimension tensor, the axis 0, 1, 2 stands for row, column, depth respectively. So in this 4 x 2 x 4 tensor, reducing the axis=1 means reducing the column space. Of course the reduce works after summing up the elements. The result dimension would be 4 x 4.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;C&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;C&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[[ 0.  1.  2.  3.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [ 4.  5.  6.  7.]]&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#  [[ 8.  9. 10. 11.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [12. 13. 14. 15.]]&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#  [[16. 17. 18. 19.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [20. 21. 22. 23.]]&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#  [[24. 25. 26. 27.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [28. 29. 30. 31.]]]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;C&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[ 4.  6.  8. 10.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [20. 22. 24. 26.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [36. 38. 40. 42.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [52. 54. 56. 58.]]&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;7-when-traveling-between-two-points-in-manhattan-what-is-the-distance-that-you-need-to-cover-in-terms-of-the-coordinates-ie-in-terms-of-avenues-and-streets-can-you-travel-diagonally&quot;&gt;7) When traveling between two points in Manhattan, what is the distance that you need to cover in terms of the coordinates, i.e., in terms of avenues and streets? Can you travel diagonally?&lt;/h6&gt;
+
+&lt;p&gt;I’m not sure what this question wants. But what I might guess is &lt;code class=&quot;highlighter-rouge&quot;&gt;L1 norm&lt;/code&gt; because we call &lt;code class=&quot;highlighter-rouge&quot;&gt;L1 norm&lt;/code&gt; the &lt;code class=&quot;highlighter-rouge&quot;&gt;Manhattan Norm&lt;/code&gt;. (We call &lt;code class=&quot;highlighter-rouge&quot;&gt;L2 norm&lt;/code&gt; the &lt;code class=&quot;highlighter-rouge&quot;&gt;Euclidean Norm&lt;/code&gt;.)&lt;/p&gt;
+
+&lt;p&gt;I don’t know what I should answer to this question..&lt;/p&gt;
+
+&lt;h6 id=&quot;8-consider-a-tensor-with-shape-2-3-4-what-are-the-shapes-of-the-summation-outputs-along-axis-0-1-and-2&quot;&gt;8) Consider a tensor with shape (2, 3, 4). What are the shapes of the summation outputs along axis 0, 1, and 2?&lt;/h6&gt;
+
+&lt;p&gt;This is a similar question up above.&lt;/p&gt;
+
+&lt;p&gt;The shape would be (3, 4), (2, 4), (2, 3) respectively.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[[ 0.  1.  2.  3.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [ 4.  5.  6.  7.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [ 8.  9. 10. 11.]]&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;#  [[12. 13. 14. 15.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [16. 17. 18. 19.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#   [20. 21. 22. 23.]]]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ax0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ax0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[12. 14. 16. 18.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [20. 22. 24. 26.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [28. 30. 32. 34.]]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ax1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ax1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[12. 15. 18. 21.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [48. 51. 54. 57.]]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ax2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ax2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [[ 6. 22. 38.]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#  [54. 70. 86.]]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;9-feed-a-tensor-with-3-or-more-axes-to-the-linalgnorm-function-and-observe-its-output-what-does-this-function-compute-for-ndarrays-of-arbitrary-shape&quot;&gt;9) Feed a tensor with 3 or more axes to the linalg.norm function and observe its output. What does this function compute for ndarrays of arbitrary shape?&lt;/h6&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 13.416408&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 180.0&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;N2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 10.954452&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 120.00001&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;np.linalg.norm&lt;/code&gt; returns the result of Frobenius norm if there is no parameter.
+You can arbitrary change the order of norm calculation by filling up the &lt;code class=&quot;highlighter-rouge&quot;&gt;ord&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;h3 id=&quot;reference&quot;&gt;Reference&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;sum(axis=) : &lt;a href=&quot;http://taewan.kim/post/numpy_sum_axis/&quot; target=&quot;_blank&quot;&gt;http://taewan.kim/post/numpy_sum_axis/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;broadcasting : &lt;a href=&quot;https://numpy.org/doc/stable/user/basics.broadcasting.html&quot; target=&quot;_blank&quot;&gt;https://numpy.org/doc/stable/user/basics.broadcasting.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;division broadcasting : &lt;a href=&quot;https://stackoverflow.com/questions/19602187/numpy-divide-each-row-by-a-vector-element&quot; target=&quot;_blank&quot;&gt;https://stackoverflow.com/questions/19602187/numpy-divide-each-row-by-a-vector-element&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;numpy linalg norm : &lt;a href=&quot;https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html&quot; target=&quot;_blank&quot;&gt;https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="linear algebra" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

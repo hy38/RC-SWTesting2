@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator>
+  <link href="https://hy38.github.io/tag/linear-regression/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://hy38.github.io/" rel="alternate" type="text/html" />
+  <updated>2020-12-05T22:01:41+09:00</updated>
+  <id>https://hy38.github.io/tag/linear-regression/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">HY38’s IT Blog | </title>
+  
+
+  
+    <subtitle>b Ha p</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">D2L 3 - Concise Implementation of Linear Regression</title>
+      <link href="https://hy38.github.io/D2L-3-linear-regression-concise" rel="alternate" type="text/html" title="D2L 3 - Concise Implementation of Linear Regression" />
+      <published>2019-06-11T19:00:00+09:00</published>
+      <updated>2019-06-11T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-linear-regression-concise</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-linear-regression-concise">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--concise-implementation-of-linear-regression&quot;&gt;Exercise : Concise Implementation of Linear Regression&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-if-we-replace-nnmseloss-with-nnmselossreductionsum-how-can-we-change-the-learning-rate-for-the-code-to-behave-identically-why&quot;&gt;1) If we replace nn.MSELoss() with nn.MSELoss(reduction=’sum’), how can we change the learning rate for the code to behave identically. Why?&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;default(mean)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MSELoss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;trainer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SGD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 0.0003235114854760468&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.00010156028292840347&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.00010140725498786196&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 0.00010207432933384553&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.0001025137462420389&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.00010135988122783601&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.00010229978943243623&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.00010266812751069665&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.00010165313869947568&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.0001017447721096687&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;reduction=’sum’&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MSELoss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'sum'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;trainer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SGD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result : &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 0.13585303723812103&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.11845800280570984&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.10822969675064087&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 0.1097884401679039&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.13867419958114624&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.13072428107261658&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.10201241821050644&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.10634788870811462&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.13075295090675354&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.11476431041955948&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;2-review-the-pytorch-documentation-to-see-what-loss-functions-and-initialization-methods-are-provided-replace-the-loss-by-hubers-loss&quot;&gt;2) Review the PyTorch documentation to see what loss functions and initialization methods are provided. Replace the loss by Huber’s loss.&lt;/h6&gt;
+
+&lt;p&gt;The name of &lt;code class=&quot;highlighter-rouge&quot;&gt;Huber's loss&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;SmoothL1Loss&lt;/code&gt; in pytorch &lt;code class=&quot;highlighter-rouge&quot;&gt;torch.nn&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;As you can see the loss below, after epoch 3, the SmoothL1Loss gives us better result.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SmoothL1Loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;trainer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SGD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 2.2134926319122314&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.456503301858902&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.0023368450347334146&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 5.8054902183357626e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 5.063020216766745e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.0628041208256036e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 5.068484824732877e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.080221308162436e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.061490446678363e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.0722886953735724e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;More information is in this &lt;a href=&quot;https://pytorch.org/docs/master/generated/torch.nn.SmoothL1Loss.html?highlight=huber&quot; target=&quot;_blank&quot;&gt;link&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, you can go &lt;a href=&quot;https://pytorch.org/docs/master/nn.html#loss-functions&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt; to see other loss functions in &lt;code class=&quot;highlighter-rouge&quot;&gt;torch.nn&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h6 id=&quot;3-how-do-you-access-the-gradient-of-net0weight&quot;&gt;3) How do you access the gradient of net[0].weight?&lt;/h6&gt;
+
+&lt;p&gt;We give the parameter net.parameters() to `torch.optim.SGD().&lt;/p&gt;
+
+&lt;p&gt;The gradient of net[0].weight can be accessed by the code below.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;weight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'epoch {}, loss {}'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epoch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.1970,  0.2462]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 2.210540533065796&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.3758,  0.1829]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.45404237508773804&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0013,  0.0685]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.0022276039235293865&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0009,  0.0033]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 5.720141780329868e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[0.0016, 0.0007]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 5.089789192425087e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0009,  0.0037]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.0788381486199796e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[0.0029, 0.0022]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 5.075278750155121e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0009,  0.0028]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.072250496596098e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0058,  0.0067]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.0622238632058725e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[-0.0029,  0.0014]])&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.065527147962712e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/master/generated/torch.nn.MSELoss.html&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/master/generated/torch.nn.MSELoss.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/master/nn.html#loss-functions&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/master/nn.html#loss-functions&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/master/generated/torch.nn.SmoothL1Loss.html?highlight=huber&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/master/generated/torch.nn.SmoothL1Loss.html?highlight=huber&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://discuss.pytorch.org/t/how-to-print-the-computed-gradient-values-for-a-network/34179/6&quot; target=&quot;_blank&quot;&gt;https://discuss.pytorch.org/t/how-to-print-the-computed-gradient-values-for-a-network/34179/6&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="linear regression" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 3 - Linear Regression Implementation from Scratch</title>
+      <link href="https://hy38.github.io/D2L-3-linear-regression-implementaion-from-scratch" rel="alternate" type="text/html" title="D2L 3 - Linear Regression Implementation from Scratch" />
+      <published>2019-06-08T19:00:00+09:00</published>
+      <updated>2019-06-08T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-linear-regression-implementaion-from-scratch</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-linear-regression-implementaion-from-scratch">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;exercise--linear-regression-implementation-from-scratch&quot;&gt;Exercise : Linear Regression Implementation from Scratch&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-what-would-happen-if-we-were-to-initialize-the-weights-w0-would-the-algorithm-still-work&quot;&gt;1) What would happen if we were to initialize the weights $w=0$. Would the algorithm still work?&lt;/h6&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;torch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zeros&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requires_grad&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tensor([[0.],&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;# [0.]], requires_grad=True)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 9.015191078186035&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 5.008845329284668&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 2.783064842224121&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 1.5464041233062744&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.8592801094055176&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.4775138795375824&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.26536378264427185&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.1474914401769638&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.08198854327201843&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.045585036277770996&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The initialization to zero did not matter to the training algorithm.&lt;/p&gt;
+
+&lt;h6 id=&quot;2-assume-that-you-are-georg-simon-ohm-trying-to-come-up-with-a-model-between-voltage-and-current-can-you-use-auto-differentiation-to-learn-the-parameters-of-your-model&quot;&gt;2) Assume that you are Georg Simon Ohm trying to come up with a model between voltage and current. Can you use auto differentiation to learn the parameters of your model.&lt;/h6&gt;
+
+&lt;p&gt;The Ohm’s law is a relationship between voltage, current, resistance. Setting current as the target value $y$, and the voltage as $x$, we get this equation.&lt;/p&gt;
+
+&lt;p&gt;$I = \dfrac{V}{R}, y = \dfrac{x}{R}$&lt;/p&gt;
+
+&lt;p&gt;By using mean-squared loss function with SGD, we can use &lt;code class=&quot;highlighter-rouge&quot;&gt;backward()&lt;/code&gt; as follows.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Minibatch loss in X and y&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Compute gradient on l with respect to [w,b]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;3-can-you-use-plancks-law-to-determine-the-temperature-of-an-object-using-spectral-energy-density&quot;&gt;3) Can you use Planck’s Law to determine the temperature of an object using spectral energy density?&lt;/h6&gt;
+
+&lt;p&gt;Planck’s law is the equation among &lt;code class=&quot;highlighter-rouge&quot;&gt;wavelength&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;spectral energy density&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;temperture&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/34434143/84217437-1b569000-ab07-11ea-97f6-1af76307d92d.png&quot; alt=&quot;planck_law&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;By transpositing I and T, we get the equation below.&lt;/p&gt;
+
+&lt;p&gt;$T(I, v) = \dfrac{hv}{Kln \dfrac{2hv^3}{c^2I}}$&lt;/p&gt;
+
+&lt;h6 id=&quot;4-what-are-the-problems-you-might-encounter-if-you-wanted-to-compute-the-second-derivatives-how-would-you-fix-them&quot;&gt;4) What are the problems you might encounter if you wanted to compute the second derivatives? How would you fix them?&lt;/h6&gt;
+
+&lt;p&gt;The first derivative may be a constant which goes to 0 when we derivate once more.&lt;/p&gt;
+
+&lt;p&gt;Also, the function might not be derivable.&lt;/p&gt;
+
+&lt;h6 id=&quot;5-why-is-the-reshape-function-needed-in-the-squared_loss-function&quot;&gt;5) Why is the reshape function needed in the squared_loss function?&lt;/h6&gt;
+
+&lt;p&gt;y_hat is the result of matrix multiplication between $X$ and $w$.&lt;/p&gt;
+
+&lt;p&gt;The shape of matmul(X, w) would be (1000, 1).&lt;/p&gt;
+
+&lt;p&gt;Since we previously set the batch size batch_size to 10, the loss shape l for each minibatch is (10, 1).&lt;/p&gt;
+
+&lt;p&gt;The shape of y_hat is (10, 1) and the shape of y is (10).&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'y_hat shape:'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'y shape: '&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Result :&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# y_hat shape: torch.Size([10, 1]) y shape:  torch.Size([10])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h6 id=&quot;6-experiment-using-different-learning-rates-to-find-out-how-fast-the-loss-function-value-drops&quot;&gt;6) Experiment using different learning rates to find out how fast the loss function value drops.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.03, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 8.98647689819336&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 4.993009567260742&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 2.7741053104400635&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 1.541479229927063&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.8565448522567749&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.47596117854118347&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 0.2645193934440613&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 0.1470237821340561&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 0.08172017335891724&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 0.045438218861818314&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.1, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 2.2391698360443115&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.3058370053768158&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 0.04183046892285347&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 0.005764374043792486&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 0.0008321439381688833&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 0.00015854007506277412&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 6.705385749228299e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.424357368610799e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.2451756346272305e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.219781451160088e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.3, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# ch 1, loss 0.041470203548669815&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 0.0001545503328088671&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 5.335054447641596e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 5.316684837453067e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 5.3126728744246066e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.326157042873092e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 5.310575943440199e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 5.3188410674920306e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 5.316302849678323e-05&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 5.317722025210969e-05&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lr = 0.01, batch size = 10, epoch = 10&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# epoch 1, loss 13.367563247680664&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 2, loss 10.992039680480957&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 3, loss 9.03872013092041&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 4, loss 7.43253231048584&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 5, loss 6.1117939949035645&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 6, loss 5.025759696960449&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 7, loss 4.132733345031738&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 8, loss 3.398400068283081&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 9, loss 2.794539451599121&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# epoch 10, loss 2.297992706298828&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The best learning rate above is 0.3.&lt;/p&gt;
+
+&lt;h6 id=&quot;7-if-the-number-of-examples-cannot-be-divided-by-the-batch-size-what-happens-to-the-data_iter-functions-behavior&quot;&gt;7) If the number of examples cannot be divided by the batch size, what happens to the data_iter function’s behavior?&lt;/h6&gt;
+
+&lt;p&gt;In Pytorch DataLoader, there is a parameter called drop_last. It makes the last batch smaller by default.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;drop_last (bool, optional): set to ``True`` to drop the last incomplete batch,
+    if the dataset size is not divisible by the batch size. If ``False`` and
+    the size of dataset is not divisible by the batch size, then the last batch
+    will be smaller. (default: ``False``)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/stable/torch.html&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/stable/torch.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://pytorch.org/docs/1.1.0/_modules/torch/utils/data/dataloader.html&quot; target=&quot;_blank&quot;&gt;https://pytorch.org/docs/1.1.0/_modules/torch/utils/data/dataloader.html&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="linear regression" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">D2L 3 - Linear Regression</title>
+      <link href="https://hy38.github.io/D2L-3-linear-regression" rel="alternate" type="text/html" title="D2L 3 - Linear Regression" />
+      <published>2019-06-06T19:00:00+09:00</published>
+      <updated>2019-06-06T19:00:00+09:00</updated>
+      <id>https://hy38.github.io/D2L-3-linear-regression</id>
+      <content type="html" xml:base="https://hy38.github.io/D2L-3-linear-regression">&lt;blockquote&gt;
+  &lt;p&gt;This is a post that I organized while studying &lt;a href=&quot;https://d2l.ai/index.html&quot; target=&quot;_blank&quot;&gt;D2L(Dive into Deep Learning)&lt;/a&gt; exercises.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;prediction-vs-inference&quot;&gt;Prediction vs Inference&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Prediction&lt;/code&gt; means using the model to predict the outcomes for &lt;strong&gt;new data points&lt;/strong&gt;. The word &lt;code class=&quot;highlighter-rouge&quot;&gt;prediction&lt;/code&gt; is generally used in machine learnings and deep learnings.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Inference&lt;/code&gt; means using the model to learn about the data generation process. It denotes estimating parameters based on a dataset. It is generally used in statistics.&lt;/p&gt;
+
+&lt;h3 id=&quot;mlemaximum-likelihood-estimation-vs-mapmaximum-a-posteriori-estimation&quot;&gt;MLE(Maximum Likelihood Estimation) vs MAP(Maximum a Posteriori Estimation)&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;MLE is one of the method of estimation $\theta$, making the maximum likelihood.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;$\hat \theta = \arg\max_\theta \mathcal L (\theta;X) = \arg\max_\theta f(X|\theta)$&lt;/p&gt;
+
+&lt;p&gt;MLE is very dependent on the observation (or given data).&lt;/p&gt;
+
+&lt;p&gt;We usually use Maximum &lt;strong&gt;Log&lt;/strong&gt;-Likelihood Estimation due to the simple computation.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Because MLE is very dependent on the observation, we bring up another method called MAP. MAP is based on MLE and Bayes’s Theorem.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;$\hat \theta = \arg\max_\theta f(\theta|X)$&lt;/p&gt;
+
+&lt;p&gt;Because MAP uses both observation data and assumptions of prior data, MAP makes us get more general parameter estimation than MLE.&lt;/p&gt;
+
+&lt;p&gt;However, to use the method of MAP, we need to know about $f(\theta)$.&lt;/p&gt;
+
+&lt;p&gt;If we have enough assumptions about &lt;code class=&quot;highlighter-rouge&quot;&gt;prior&lt;/code&gt; data we can make better estimation.&lt;/p&gt;
+
+&lt;p&gt;Of course the &lt;code class=&quot;highlighter-rouge&quot;&gt;prior&lt;/code&gt; data is very important since the setimation refers to the prior data. For example, if we have bad prior data, the estimation also gets bad.&lt;/p&gt;
+
+&lt;h3 id=&quot;exercise--linear-regression&quot;&gt;Exercise : Linear Regression&lt;/h3&gt;
+
+&lt;h6 id=&quot;1-assume-that-we-have-some-data--x_1-ldots-x_n-in-mathbbr--our-goal-is-to-find-a-constant-b-such-that-sum_i-x_i---b2-is-minimized&quot;&gt;1) Assume that we have some data  $x_1, \ldots, x_n \in \mathbb{R}$ . Our goal is to find a constant $b$ such that $\sum_i (x_i - b)^2$ is minimized.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Find a closed-form solution for the optimal value of b .&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The problem comes to be minimizing $\sum x_i - b$. It can be represented as $(x_1 + x_2 + … + x_n) - (nb)$.
+Since we can notate the $x$s as a vector, minimizing this function to zero is as follows.&lt;/p&gt;
+
+&lt;p&gt;$b = \dfrac{\mathbf{x}}{n}$&lt;/p&gt;
+
+&lt;p&gt;You may have noticed that it is the average of data $\mathbf{x}$.&lt;/p&gt;
+
+&lt;p&gt;Also, we can think $b$ in $x_i - b$ as a point that minimizes the $x$ values in a &lt;code class=&quot;highlighter-rouge&quot;&gt;number line&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;How does this problem and its solution relate to the normal distribution?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since $b$ is the average of data $\mathbf{x}$, we can denote $(x_i - b)$ in a different way as $\mathbf{X} - \mu$.&lt;/p&gt;
+
+&lt;h6 id=&quot;2-derive-the-closed-form-solution-to-the-optimization-problem-for-linear-regression-with-squared-error-to-keep-things-simple-you-can-omit-the-bias-b-from-the-problem-we-can-do-this-in-principled-fashion-by-adding-one-column-to-x-consisting-of-all-ones&quot;&gt;2) Derive the closed-form solution to the optimization problem for linear regression with squared error. To keep things simple, you can omit the bias $b$ from the problem (we can do this in principled fashion by adding one column to $X$ consisting of all ones).&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Write out the optimization problem in matrix and vector notation (treat all the data as a single matrix, all the target values as a single vector).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;$L(\mathbf{w}, b) =\frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) =\frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2$&lt;/p&gt;
+
+&lt;p&gt;By vectorizing the above expression, we get the expression below.&lt;/p&gt;
+
+&lt;p&gt;$L(\mathbf{w}, b) = \frac{1}{n} \frac{1}{2}(\mathbf{X}\mathbf{w} - \mathbf{y})^2$&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Compute the gradient of the loss with respect to $w$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The gradient of the equation with respect to $w$ is as below.&lt;/p&gt;
+
+&lt;p&gt;$\dfrac{1}{n} (\mathbf{X} \mathbf{w} - \mathbf{y}) X$.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Find the closed form solution by setting the gradient equal to zero and solving the matrix equation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since $\dfrac{1}{n} (\mathbf{X} \mathbf{w} - \mathbf{y}) X = 0$, we remove the $\dfrac{1}{n}$ term, $X$ term.&lt;/p&gt;
+
+&lt;p&gt;Thus, the equation changes as follows.&lt;/p&gt;
+
+&lt;p&gt;$\mathbf{X} \mathbf{w} - \mathbf{y} = 0$.&lt;/p&gt;
+
+&lt;p&gt;Then, we will multiply $mathbf{X}^T$ and develop the equation as&lt;/p&gt;
+
+&lt;p&gt;$\mathbf{X}^T \mathbf{X} \mathbf{w} - \mathbf{X}^T \mathbf{y} = 0$.&lt;/p&gt;
+
+&lt;p&gt;Finally, we get this &lt;strong&gt;normal equation&lt;/strong&gt; below.&lt;/p&gt;
+
+&lt;p&gt;$\mathbf{w} = (\mathbf X^\top \mathbf X)^{-1}\mathbf X^\top \mathbf{y}.$&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;When might this be better than using stochastic gradient descent? When might this method break?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;(1) Normal equation method&lt;/p&gt;
+
+&lt;p&gt;Because this method is non-iterative, this normal equation method is better when we deal datas which size is under 10000. But, this method does inverse matrix calculation, having time-complexity of $O(n^3)$.&lt;/p&gt;
+
+&lt;p&gt;Also, we do not have to care about the learning rate.&lt;/p&gt;
+
+&lt;p&gt;(2) Stochastic gradient descent&lt;/p&gt;
+
+&lt;p&gt;On the other hand, using stochastic gradient descent is useful when dealing with large datas(n $\geq$ 10000).&lt;/p&gt;
+
+&lt;p&gt;This method has time-complexity of $O(kn^2)$.&lt;/p&gt;
+
+&lt;p&gt;However, we need special care for learning rate to use this method.&lt;/p&gt;
+
+&lt;h6 id=&quot;3-assume-that-the-noise-model-governing-the-additive-noise-ϵ-is-the-exponential-distribution-that-is-pepsilon--frac12-exp-epsilon&quot;&gt;3) Assume that the noise model governing the additive noise ϵ is the exponential distribution. That is, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$.&lt;/h6&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Write out the negative log-likelihood of the data under the model $-\log P(Y \mid X)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;$-\log p(\mathbf y|\mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma^2) + \frac{1}{2 \sigma^2} \left(y^{(i)} - \mathbf{w}^\top \mathbf{x}^{(i)} - b\right)^2.$&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Can you find a closed form solution?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We want to find the solution of $w$ that minimizes the NLL(Negative Log-Likelihood) function.&lt;/p&gt;
+
+&lt;p&gt;Since this function is dependent on $w$ and $b$, we could ignore the first term and the $\sigma$.&lt;/p&gt;
+
+&lt;p&gt;Doing the derivative and setting the gradient to &lt;em&gt;zero&lt;/em&gt; comes up with this solution below.&lt;/p&gt;
+
+&lt;p&gt;$w = (X^TX)^{-1}X^TY.$&lt;/p&gt;
+
+&lt;p&gt;It is same with normal equation.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Suggest a stochastic gradient descent algorithm to solve this problem. What could possibly go wrong (hint - what happens near the stationary point as we keep on updating the parameters). Can you fix this?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;MLE MAP post &lt;a href=&quot;https://sanghyukchun.github.io/58/&quot; target=&quot;_blank&quot;&gt;https://sanghyukchun.github.io/58/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;why NLL? &lt;a href=&quot;https://ratsgo.github.io/deep%20learning/2017/09/24/loss/&quot; target=&quot;_blank&quot;&gt;https://ratsgo.github.io/deep%20learning/2017/09/24/loss/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;MLE &lt;a href=&quot;https://ratsgo.github.io/statistics/2017/09/23/MLE/&quot; target=&quot;_blank&quot;&gt;https://ratsgo.github.io/statistics/2017/09/23/MLE/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.datascienceblog.net/post/commentary/inference-vs-prediction/&quot; target=&quot;_blank&quot;&gt;https://www.datascienceblog.net/post/commentary/inference-vs-prediction/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;/MLcoursera-2-1&quot; target=&quot;_blank&quot;&gt;https://hy38.github.io/MLcoursera-2-1&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;edwith normal equation &lt;a href=&quot;https://www.edwith.org/linearalgebra4ai/lecture/24131/&quot; target=&quot;_blank&quot;&gt;https://www.edwith.org/linearalgebra4ai/lecture/24131/&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Sanghyun Park</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="deep learning" />
+      
+        <category term="linear regression" />
+      
+
+      
+        <summary type="html">This is a post that I organized while studying D2L(Dive into Deep Learning) exercises.</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>
